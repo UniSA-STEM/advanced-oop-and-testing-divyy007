@@ -56,3 +56,37 @@ def test_assign_incompatible_species(zoo, penguin, savannah_enclosure):
     with pytest.raises(AssignmentError) as excinfo:
         zoo.assign_animal_to_enclosure("Pingu", "Savannah Pen")
     assert "Species mismatch" in str(excinfo.value)
+
+def test_assign_incompatible_environment(zoo):
+    """Test assignment fails when environment types do not match."""
+    # Create a Mammal that lives in Water (edge case)
+    whale = Mammal("Moby", 10, "Plankton", "Aquatic")
+    savannah_pen = Enclosure("Dry Pen", 500, "Savannah", 10, Mammal)
+    
+    zoo.add_animal(whale)
+    zoo.add_enclosure(savannah_pen)
+    
+    with pytest.raises(AssignmentError) as excinfo:
+        zoo.assign_animal_to_enclosure("Moby", "Dry Pen")
+    assert "Environmental mismatch" in str(excinfo.value)
+
+def test_sick_animal_movement_restriction(zoo, lion, savannah_enclosure):
+    """Test that a sick animal cannot be moved."""
+    zoo.add_animal(lion)
+    zoo.add_enclosure(savannah_enclosure)
+    
+    # Make the lion sick
+    lion.add_health_issue("Flu", "2024-01-01", 5, "Rest")
+    
+    with pytest.raises(AssignmentError) as excinfo:
+        zoo.assign_animal_to_enclosure("Leo", "Savannah Pen")
+    assert "under treatment" in str(excinfo.value)
+
+def test_animal_polymorphism():
+    """Test that different animals make different sounds."""
+    lion = Mammal("Simba", 1, "Meat", "Land")
+    bird = Bird("Tweety", 1, "Seeds", "Air")
+    
+    assert lion.cry() == "ROAR!"
+    assert bird.cry() == "CAW! CAW!"
+
