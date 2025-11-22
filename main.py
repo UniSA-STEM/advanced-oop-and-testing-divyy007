@@ -153,3 +153,15 @@ def run_demonstration():
     except AssignmentError as e:
         # Exception Handling to prevent crash [11]
         print(f"FAILURE REPORT: {e}")
+
+    # 6. Demonstrate Health Constraint
+    # Leo gets sick (Animal health update requires Veterinarian interaction, simulated here)
+    leo.add_health_issue("Broken tooth", "2024-05-01", 8, "Surgery required")
+    print(f"STATUS: Leo is under treatment: {leo.is_under_treatment()}")
+    
+    try:
+        # Attempt to move the sick animal
+        print("ATTEMPT: Trying to move sick animal Leo...")
+        zoo.assign_animal_to_enclosure("Leo", "Lion Habitat") # This call will fail
+    except AssignmentError as e:
+        print(f"FAILURE REPORT: {e}")
