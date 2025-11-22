@@ -40,3 +40,21 @@ class Zookeeper(Staff):
         enclosure.clean() 
         return f"{self.get_name()} cleaned {enclosure.get_name()}. Cleanliness is now maxed out."
 
+class Veterinarian(Staff):
+    """Staff specialized in animal health management (Specialisation)."""
+    def __init__(self, name: str, employee_id: str):
+        super().__init__(name, employee_id)
+
+    def conduct_health_check(self, animal: Animal):
+        """Veterinarian inspects the animal and reports its status."""
+        records = animal.get_health_records()
+        if not records:
+            return f"{animal.get_name()} is healthy with no recent issues."
+        
+        report = [str(r) for r in records]
+        return f"{self.get_name()} conducted check on {animal.get_name()}. Issues: \n" + "\n".join(report)
+
+    def record_health_issue(self, animal: Animal, description: str, date: str, severity: int, treatment: str):
+        """Adds a health issue to the animal's records (Association)."""
+        animal.add_health_issue(description, date, severity, treatment)
+        return f"{self.get_name()} recorded issue for {animal.get_name()} (Severity {severity})."
