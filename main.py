@@ -114,3 +114,26 @@ class ZooManager:
         
         # Sort the results by name using a lambda expression if the list stored tuples/objects
         return sick_animals
+
+# --- Demonstration Script ---
+# (The sources require main.py to act as a demonstration script/walkthrough)
+
+def run_demonstration():
+    zoo = ZooManager()
+
+    # 1. Create Animals (Inheritance & Abstraction in action)
+    leo = Mammal("Leo", 5, "Meat", "Savannah")
+    penguin = Bird("Waddles", 2, "Fish", "Aquatic")
+    viper = Reptile("Scales", 1, "Rodents", "Desert")
+
+    # 2. Add Animals to ZooManager (Composition)
+    zoo.add_animal(leo)
+    zoo.add_animal(penguin)
+    zoo.add_animal(viper)
+
+    # 3. Create Enclosures
+    lion_habitat = Enclosure("Lion Habitat", 500, "Savannah", 10, Mammal)
+    penguin_pool = Enclosure("Penguin Pool", 300, "Aquatic", 8, Bird)
+    
+    zoo.add_enclosure(lion_habitat)
+    zoo.add_enclosure(penguin_pool)
