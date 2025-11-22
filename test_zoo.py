@@ -35,3 +35,24 @@ def test_add_duplicate_animal(zoo, lion):
     zoo.add_animal(lion)
     with pytest.raises(AssignmentError):
         zoo.add_animal(lion)
+
+def test_assign_animal_to_enclosure_success(zoo, lion, savannah_enclosure):
+    """Test successful assignment of animal to compatible enclosure."""
+    zoo.add_animal(lion)
+    zoo.add_enclosure(savannah_enclosure)
+    
+    zoo.assign_animal_to_enclosure("Leo", "Savannah Pen")
+    
+    # Check if animal is inside the enclosure object
+    housed = savannah_enclosure.get_housed_animals()
+    assert "Leo" in housed
+
+def test_assign_incompatible_species(zoo, penguin, savannah_enclosure):
+    """Test assignment fails when species does not match enclosure type."""
+    zoo.add_animal(penguin)
+    zoo.add_enclosure(savannah_enclosure)
+    
+    # Penguin (Bird) cannot go into Mammal enclosure
+    with pytest.raises(AssignmentError) as excinfo:
+        zoo.assign_animal_to_enclosure("Pingu", "Savannah Pen")
+    assert "Species mismatch" in str(excinfo.value)
