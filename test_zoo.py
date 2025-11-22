@@ -21,3 +21,17 @@ def penguin():
 @pytest.fixture
 def savannah_enclosure():
     return Enclosure("Savannah Pen", 500, "Savannah", 5, Mammal)
+
+# --- Tests ---
+
+def test_add_animal(zoo, lion):
+    """Test adding an animal to the registry."""
+    zoo.add_animal(lion)
+    assert "Leo" in zoo.get_animals()
+    assert isinstance(zoo.get_animals()["Leo"], Mammal)
+
+def test_add_duplicate_animal(zoo, lion):
+    """Test that adding a duplicate animal raises an error."""
+    zoo.add_animal(lion)
+    with pytest.raises(AssignmentError):
+        zoo.add_animal(lion)
