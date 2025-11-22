@@ -116,7 +116,6 @@ class ZooManager:
         return sick_animals
 
 # --- Demonstration Script ---
-# (The sources require main.py to act as a demonstration script/walkthrough)
 
 def run_demonstration():
     zoo = ZooManager()
@@ -173,3 +172,6 @@ def run_demonstration():
     
     sick_report = zoo.generate_health_reports_by_severity(5)
     print(f"High Severity Cases: {sick_report}")
+
+if __name__ == "__main__":
+    run_demonstration() 
