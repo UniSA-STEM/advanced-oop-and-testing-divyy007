@@ -59,3 +59,15 @@ class ZooManager:
         except KeyError:
             # Explicitly raise a more descriptive error if needed, or handle gracefully
             raise AssignmentError(f"Animal '{animal_name}' not found in registry.")
+        
+    def add_enclosure(self, enclosure: Enclosure):
+        # Validation Check 1: Ensure input is an Enclosure type
+        if not isinstance(enclosure, Enclosure):
+            raise TypeError("Only Enclosure objects can be added to the zoo.")
+
+        enc_name = enclosure.get_name()
+        if enc_name in self.__enclosures:
+             raise AssignmentError(f"Enclosure '{enc_name}' already exists.")
+             
+        self.__enclosures[enc_name] = enclosure
+        print(f"REPORT: Added enclosure: {enc_name} (Type: {enclosure.get_environmental_type()})")
