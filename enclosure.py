@@ -31,3 +31,16 @@ class Enclosure:
         # Dictionary to store housed animals (Composition)
         self.__housed_animals = {} # Key: animal name, Value: Animal object
 
+    # --- Getters ---
+    def get_name(self):
+        return self.__name
+        
+    def get_environmental_type(self):
+        return self.__environmental_type
+
+    def get_cleanliness_level(self):
+        return self.__cleanliness_level
+        
+    def get_housed_animals(self):
+        return self.__housed_animals
+
