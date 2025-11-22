@@ -44,3 +44,38 @@ class Enclosure:
     def get_housed_animals(self):
         return self.__housed_animals
 
+    # --- Core Functionality & Validation ---
+
+    def add_animal(self, animal: Animal):
+        """Adds an animal if it meets environmental and species constraints."""
+        
+        # Constraint 1: Check if the animal's class matches the compatible species
+        if not isinstance(animal, self.__compatible_species):
+            # Raise exception if species is incompatible
+            raise AssignmentError(f"Species mismatch: {animal.get_name()} ({animal.__class__.__name__}) cannot be housed with type {self.__compatible_species.__name__}.")
+            
+        # Constraint 2: Check environmental needs (using an attribute for validation)
+        if animal.get_environment_type() != self.__environmental_type:
+            raise AssignmentError(f"Environmental mismatch: {animal.get_name()} requires {animal.get_environment_type()} environment.")
+            
+        # Add the animal to the housed collection
+        self.__housed_animals[animal.get_name()] = animal
+        
+    def remove_animal(self, animal_name: str):
+        """Removes an animal by name."""
+        if animal_name not in self.__housed_animals:
+            raise AssignmentError(f"Animal '{animal_name}' not found in enclosure '{self.__name}'.")
+        return self.__housed_animals.pop(animal_name)
+
+    def report_status(self):
+        """Reports the enclosure status and lists contained animals."""
+        animal_names = ", ".join(self.__housed_animals.keys())
+        return (f"ENCLOSURE: {self.__name}\n"
+                f"  Type: {self.__environmental_type}, Cleanliness: {self.__cleanliness_level}/10\n"
+                f"  Animals Housed: {animal_names if animal_names else 'None'}")
+
+    def clean(self, amount: int = 10):
+        """Increases cleanliness level, capped at 10."""
+        self.__cleanliness_level += amount
+        if self.__cleanliness_level > 10:
+            self.__cleanliness_level = 10
