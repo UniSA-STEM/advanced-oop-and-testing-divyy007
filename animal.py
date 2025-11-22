@@ -6,6 +6,8 @@ ID: 110449639
 Username: divyy007
 This is my own work as defined by the University's Academic Integrity Policy.
 '''
+
+
 from abc import ABC, abstractmethod
 from typing import List
 from custom_exceptions import AssignmentError
@@ -21,8 +23,8 @@ class HealthRecord:
             raise ValueError("Severity must be between 1 and 10.")
         self.__severity = severity
         self.__treatment = treatment
-
-        # Getter for required constraint check (Encapsulation)
+    
+    # Getter for required constraint check (Encapsulation)
     def get_severity(self):
         return self.__severity
 
@@ -33,3 +35,30 @@ class HealthRecord:
     def __str__(self):
         # Uses F-String for readable string formatting
         return f"Issue: {self.__description} (Severity: {self.__severity}, Treatment: {self.__treatment})"
+
+class Animal(ABC):
+    """Abstract Base Class for all animals (Generalisation)"""
+    
+    def __init__(self, name: str, age: int, dietary_needs: str, environment_type: str):
+        # Private attributes enforced
+        self.__name = name
+        self.__age = age
+        self.__dietary_needs = dietary_needs
+        self.__environment_type = environment_type
+        # List of HealthRecord objects (Composition)
+        self.__health_records: List[HealthRecord] = []
+    # Mandatory Abstract Methods (must be implemented by children)
+    @abstractmethod
+    def cry(self):
+        """Defines the unique sound the animal makes (Polymorphism)."""
+        pass
+    
+    @abstractmethod
+    def eat(self):
+        pass
+        
+    @abstractmethod
+    def sleep(self):
+        pass
+
+   
