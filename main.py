@@ -71,3 +71,22 @@ class ZooManager:
              
         self.__enclosures[enc_name] = enclosure
         print(f"REPORT: Added enclosure: {enc_name} (Type: {enclosure.get_environmental_type()})")
+
+    def assign_animal_to_enclosure(self, animal_name: str, enclosure_name: str):
+        """Assigns an animal to an enclosure, enforcing all health and species constraints."""
+        try:
+            animal = self.__animals[animal_name]
+            enclosure = self.__enclosures[enclosure_name]
+        except KeyError as e:
+            # Handle if animal or enclosure is not found [9]
+            raise AssignmentError(f"Could not find required entity: {e.args}")
+
+        # Constraint 1: Health Status Check (Animal under treatment should not be moved)
+        if animal.is_under_treatment(): # Assumes animal.py implements this getter
+            # Raise a custom exception when a rule is violated [12, 13]
+            raise AssignmentError(f"Animal {animal_name} is under treatment and cannot be moved.")
+            
+        # Constraint 2 & 3: Species/Environment Check (delegated to Enclosure logic)
+        enclosure.add_animal(animal)
+        
+        print(f"REPORT: Assigned {animal_name} to {enclosure_name}.")
