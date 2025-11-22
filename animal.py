@@ -6,3 +6,30 @@ ID: 110449639
 Username: divyy007
 This is my own work as defined by the University's Academic Integrity Policy.
 '''
+from abc import ABC, abstractmethod
+from typing import List
+from custom_exceptions import AssignmentError
+
+class HealthRecord:
+    """Class to encapsulate complex health data (Composition)."""
+    def __init__(self, description: str, date: str, severity: int, treatment: str):
+        # All attributes are private
+        self.__description = description
+        self.__date = date
+        # Data validation for severity
+        if not 1 <= severity <= 10:
+            raise ValueError("Severity must be between 1 and 10.")
+        self.__severity = severity
+        self.__treatment = treatment
+
+        # Getter for required constraint check (Encapsulation)
+    def get_severity(self):
+        return self.__severity
+
+    def get_treatment(self):
+        """Returns the treatment plan."""
+        return self.__treatment
+        
+    def __str__(self):
+        # Uses F-String for readable string formatting
+        return f"Issue: {self.__description} (Severity: {self.__severity}, Treatment: {self.__treatment})"
