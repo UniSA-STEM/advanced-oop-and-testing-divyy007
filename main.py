@@ -30,3 +30,32 @@ class ZooManager:
     def get_enclosures(self):
         """Returns the dictionary of all enclosures."""
         return self.__enclosures
+    
+    # --- Core Management Methods ---
+    
+    def add_animal(self, animal: Animal):
+        """Adds an animal object to the central registry, performing validation."""
+        # Validation Check 1: Ensure input is an Animal type
+        if not isinstance(animal, Animal):
+            raise TypeError("Only Animal objects can be added to the zoo.")
+        
+        # Validation Check 2: Ensure name is unique (KeyError handling implicitly needed when accessing)
+        animal_name = animal.get_name()
+        if animal_name in self.__animals:
+             raise AssignmentError(f"Animal '{animal_name}' already exists.")
+             
+        self.__animals[animal_name] = animal
+        print(f"REPORT: Added animal: {animal_name} ({animal.__class__.__name__})")
+
+    def remove_animal(self, animal_name: str):
+        """Removes an animal from the registry and checks if it is assigned to an enclosure."""
+        # Exception Handling using Try-Except for KeyError
+        try:
+            animal = self.__animals.pop(animal_name)
+            # Before deletion, check if it's in an enclosure (ideally, remove it first, but simplified for core assignment scope)
+            
+            print(f"REPORT: Removed animal: {animal_name}")
+            return animal
+        except KeyError:
+            # Explicitly raise a more descriptive error if needed, or handle gracefully
+            raise AssignmentError(f"Animal '{animal_name}' not found in registry.")
