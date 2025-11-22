@@ -73,7 +73,6 @@ class Animal(ABC):
     def is_under_treatment(self) -> bool:
         """Checks if any current health record indicates treatment required."""
         # Simple check based on treatment being recorded
-        # This line caused the error previously because get_treatment() didn't exist
         return any(rec for rec in self.__health_records if rec.get_treatment().lower() != "none")
 
     # --- Methods for Veterinarian interaction (Encapsulation/Setters) ---
@@ -88,3 +87,46 @@ class Animal(ABC):
         """Magic method for string conversion."""
         return f"{self.__name} ({self.__class__.__name__}, Age: {self.__age})"
 
+# --- Subclasses (Specialisation) ---
+
+class Mammal(Animal):
+    def __init__(self, name: str, age: int, dietary_needs: str, environment_type: str):
+        # Use super() to call the parent's constructor
+        super().__init__(name, age, dietary_needs, environment_type)
+        
+    def cry(self):
+        return "ROAR!" # Implements the abstract method (Polymorphism)
+
+    def eat(self):
+        return "Chewing..."
+
+    def sleep(self):
+        return "Curled up and resting."
+
+class Bird(Animal):
+    def __init__(self, name: str, age: int, dietary_needs: str, environment_type: str):
+        super().__init__(name, age, dietary_needs, environment_type)
+        
+    def cry(self):
+        return "CAW! CAW!"
+
+    def eat(self):
+        return "Pecking grain."
+
+    def sleep(self):
+        return "Perched and sleeping."
+
+class Reptile(Animal):
+    def __init__(self, name: str, age: int, dietary_needs: str, environment_type: str):
+        super().__init__(name, age, dietary_needs, environment_type)
+        
+    def cry(self):
+        return "Hissing softly."
+
+    def eat(self):
+        return "Swallowing prey whole."
+
+    def sleep(self):
+        return "Basking under heat lamp."
+
+   
