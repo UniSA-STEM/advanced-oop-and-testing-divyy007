@@ -90,3 +90,27 @@ class ZooManager:
         enclosure.add_animal(animal)
         
         print(f"REPORT: Assigned {animal_name} to {enclosure_name}.")
+
+    # --- Reporting and Utilities ---
+    
+    def generate_animal_report_by_species(self, species_class):
+        """Generates a list of animals belonging to a specific class (e.g., Mammal)."""
+        # Uses List Comprehension for filtering objects based on type
+        report = [
+            animal.get_name() 
+            for animal in self.__animals.values() 
+            if isinstance(animal, species_class) # Using isinstance() for type filtering
+        ]
+        return report
+
+    def generate_health_reports_by_severity(self, min_severity: int):
+        """Generates reports for animals with health issues above a minimum severity."""
+        sick_animals = []
+        for animal in self.__animals.values():
+            records = animal.get_health_records() # Assumes this returns the list of records
+            for record in records:
+                if record.get_severity() >= min_severity:
+                    sick_animals.append(f"{animal.get_name()} (Severity {record.get_severity()})")
+        
+        # Sort the results by name using a lambda expression if the list stored tuples/objects
+        return sick_animals
