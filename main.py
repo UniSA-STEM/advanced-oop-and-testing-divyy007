@@ -137,3 +137,19 @@ def run_demonstration():
     
     zoo.add_enclosure(lion_habitat)
     zoo.add_enclosure(penguin_pool)
+
+    # 4. Assign Animals (Successful)
+    try:
+        zoo.assign_animal_to_enclosure("Leo", "Lion Habitat")
+        zoo.assign_animal_to_enclosure("Waddles", "Penguin Pool")
+    except AssignmentError as e:
+        print(f"ASSIGNMENT FAILED: {e}")
+
+    # 5. Demonstrate Constraints (Incompatible Species)
+    print("\n--- Testing Constraints (Failures) ---")
+    try:
+        # Attempt to put a Reptile in a Bird enclosure
+        zoo.assign_animal_to_enclosure("Scales", "Penguin Pool")
+    except AssignmentError as e:
+        # Exception Handling to prevent crash [11]
+        print(f"FAILURE REPORT: {e}")
