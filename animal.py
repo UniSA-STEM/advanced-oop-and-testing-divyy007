@@ -76,3 +76,15 @@ class Animal(ABC):
         # This line caused the error previously because get_treatment() didn't exist
         return any(rec for rec in self.__health_records if rec.get_treatment().lower() != "none")
 
+    # --- Methods for Veterinarian interaction (Encapsulation/Setters) ---
+    def add_health_issue(self, description: str, date: str, severity: int, treatment: str):
+        """Allows staff to add a new health record."""
+        record = HealthRecord(description, date, severity, treatment)
+        self.__health_records.append(record)
+        if treatment.lower() != "none":
+            print(f"ALERT: {self.__name} is now under treatment.")
+    
+    def __str__(self):
+        """Magic method for string conversion."""
+        return f"{self.__name} ({self.__class__.__name__}, Age: {self.__age})"
+
