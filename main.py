@@ -165,3 +165,11 @@ def run_demonstration():
         zoo.assign_animal_to_enclosure("Leo", "Lion Habitat") # This call will fail
     except AssignmentError as e:
         print(f"FAILURE REPORT: {e}")
+
+    #7. Reporting
+    print("\n--- Generating Reports ---")
+    mammal_list = zoo.generate_animal_report_by_species(Mammal)
+    print(f"Mammals in Zoo: {mammal_list}")
+    
+    sick_report = zoo.generate_health_reports_by_severity(5)
+    print(f"High Severity Cases: {sick_report}")
