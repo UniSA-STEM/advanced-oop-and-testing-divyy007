@@ -60,5 +60,19 @@ class Animal(ABC):
     @abstractmethod
     def sleep(self):
         pass
+ # --- Getters (Accessors) for private data ---
+    def get_name(self) -> str:
+        return self.__name
 
-   
+    def get_environment_type(self) -> str:
+        return self.__environment_type
+        
+    def get_health_records(self) -> List[HealthRecord]:
+        return self.__health_records
+    
+    def is_under_treatment(self) -> bool:
+        """Checks if any current health record indicates treatment required."""
+        # Simple check based on treatment being recorded
+        # This line caused the error previously because get_treatment() didn't exist
+        return any(rec for rec in self.__health_records if rec.get_treatment().lower() != "none")
+
