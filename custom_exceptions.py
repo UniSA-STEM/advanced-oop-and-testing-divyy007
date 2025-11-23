@@ -1,4 +1,3 @@
-class AssignmentError(Exception): 
-    """Custom excception for assignment-related errors in the Zoo
-    Management System."""
+class AssignmentError(Exception):
+    """A custom error used when specific zoo rules (like safety or health) are broken."""
     pass

@@ -10,36 +10,33 @@ This is my own work as defined by the University's Academic Integrity Policy.
 from animal import Animal, Mammal, Bird, Reptile, HealthRecord
 from enclosure import Enclosure
 from staff import Staff, Zookeeper, Veterinarian
-from custom_exceptions import AssignmentError # Custom Exception (see below)
+from custom_exceptions import AssignmentError
 
 class ZooManager:
     """Manages all collections of animals, enclosures, and staff."""
     
     def __init__(self):
-        # Using Dictionaries for fast lookups (Key: Name, Value: Object) [8]
+        # Using dictionaries to store objects by name
         self.__animals = {}
         self.__enclosures = {}
         self.__staff = {}
     
-    # --- Encapsulation (Getters/Setters) ---
-    # Simplified getters for the collections (for reporting/main demonstration)
+    # --- Getters ---
     def get_animals(self):
-        """Returns the dictionary of all animals."""
         return self.__animals
 
     def get_enclosures(self):
-        """Returns the dictionary of all enclosures."""
         return self.__enclosures
     
     # --- Core Management Methods ---
     
     def add_animal(self, animal: Animal):
-        """Adds an animal object to the central registry, performing validation."""
-        # Validation Check 1: Ensure input is an Animal type
+        """Adds an animal object to the central registry."""
+        # Verify input type
         if not isinstance(animal, Animal):
             raise TypeError("Only Animal objects can be added to the zoo.")
         
-        # Validation Check 2: Ensure name is unique (KeyError handling implicitly needed when accessing)
+        # Check for duplicates
         animal_name = animal.get_name()
         if animal_name in self.__animals:
              raise AssignmentError(f"Animal '{animal_name}' already exists.")
@@ -48,20 +45,17 @@ class ZooManager:
         print(f"REPORT: Added animal: {animal_name} ({animal.__class__.__name__})")
 
     def remove_animal(self, animal_name: str):
-        """Removes an animal from the registry and checks if it is assigned to an enclosure."""
-        # Exception Handling using Try-Except for KeyError
+        """Removes an animal from the registry."""
+        # Safely remove the animal; handles cases where the name doesn't exist
         try:
             animal = self.__animals.pop(animal_name)
-            # Before deletion, check if it's in an enclosure (ideally, remove it first, but simplified for core assignment scope)
-            
             print(f"REPORT: Removed animal: {animal_name}")
             return animal
         except KeyError:
-            # Explicitly raise a more descriptive error if needed, or handle gracefully
             raise AssignmentError(f"Animal '{animal_name}' not found in registry.")
-        
+
     def add_enclosure(self, enclosure: Enclosure):
-        # Validation Check 1: Ensure input is an Enclosure type
+        # Verify input type
         if not isinstance(enclosure, Enclosure):
             raise TypeError("Only Enclosure objects can be added to the zoo.")
 
@@ -78,28 +72,27 @@ class ZooManager:
             animal = self.__animals[animal_name]
             enclosure = self.__enclosures[enclosure_name]
         except KeyError as e:
-            # Handle if animal or enclosure is not found [9]
+            # Stop if the animal or enclosure names are invalid
             raise AssignmentError(f"Could not find required entity: {e.args}")
 
-        # Constraint 1: Health Status Check (Animal under treatment should not be moved)
-        if animal.is_under_treatment(): # Assumes animal.py implements this getter
-            # Raise a custom exception when a rule is violated [12, 13]
+        # Constraint 1: Sick animals cannot be moved
+        if animal.is_under_treatment():
             raise AssignmentError(f"Animal {animal_name} is under treatment and cannot be moved.")
             
-        # Constraint 2 & 3: Species/Environment Check (delegated to Enclosure logic)
+        # Constraint 2 & 3: Add to enclosure (validation happens inside Enclosure class)
         enclosure.add_animal(animal)
         
         print(f"REPORT: Assigned {animal_name} to {enclosure_name}.")
-
+        
     # --- Reporting and Utilities ---
     
     def generate_animal_report_by_species(self, species_class):
-        """Generates a list of animals belonging to a specific class (e.g., Mammal)."""
-        # Uses List Comprehension for filtering objects based on type
+        """Generates a list of animals belonging to a specific class."""
+        # Filter the list to include only the requested species
         report = [
             animal.get_name() 
             for animal in self.__animals.values() 
-            if isinstance(animal, species_class) # Using isinstance() for type filtering
+            if isinstance(animal, species_class)
         ]
         return report
 
@@ -107,25 +100,23 @@ class ZooManager:
         """Generates reports for animals with health issues above a minimum severity."""
         sick_animals = []
         for animal in self.__animals.values():
-            records = animal.get_health_records() # Assumes this returns the list of records
+            records = animal.get_health_records()
             for record in records:
                 if record.get_severity() >= min_severity:
-                    sick_animals.append(f"{animal.get_name()} (Severity {record.get_severity()})")
-        
-        # Sort the results by name using a lambda expression if the list stored tuples/objects
+                    sick_animals.append(f"ATTENTION: {animal.get_name()} requires care (Severity: {record.get_severity()})")
         return sick_animals
-
+        
 # --- Demonstration Script ---
 
 def run_demonstration():
     zoo = ZooManager()
 
-    # 1. Create Animals (Inheritance & Abstraction in action)
+    # 1. Setup initial animals
     leo = Mammal("Leo", 5, "Meat", "Savannah")
     penguin = Bird("Waddles", 2, "Fish", "Aquatic")
     viper = Reptile("Scales", 1, "Rodents", "Desert")
 
-    # 2. Add Animals to ZooManager (Composition)
+    # 2. Register animals in the system
     zoo.add_animal(leo)
     zoo.add_animal(penguin)
     zoo.add_animal(viper)
@@ -150,28 +141,28 @@ def run_demonstration():
         # Attempt to put a Reptile in a Bird enclosure
         zoo.assign_animal_to_enclosure("Scales", "Penguin Pool")
     except AssignmentError as e:
-        # Exception Handling to prevent crash [11]
+        # Catch the error to keep the program running
         print(f"FAILURE REPORT: {e}")
-
+        
     # 6. Demonstrate Health Constraint
-    # Leo gets sick (Animal health update requires Veterinarian interaction, simulated here)
+    # Leo gets sick
     leo.add_health_issue("Broken tooth", "2024-05-01", 8, "Surgery required")
     print(f"STATUS: Leo is under treatment: {leo.is_under_treatment()}")
     
     try:
         # Attempt to move the sick animal
         print("ATTEMPT: Trying to move sick animal Leo...")
-        zoo.assign_animal_to_enclosure("Leo", "Lion Habitat") # This call will fail
+        zoo.assign_animal_to_enclosure("Leo", "Lion Habitat")
     except AssignmentError as e:
         print(f"FAILURE REPORT: {e}")
 
-    #7. Reporting
+    # 7. Reporting
     print("\n--- Generating Reports ---")
     mammal_list = zoo.generate_animal_report_by_species(Mammal)
     print(f"Mammals in Zoo: {mammal_list}")
     
     sick_report = zoo.generate_health_reports_by_severity(5)
     print(f"High Severity Cases: {sick_report}")
-
+    
 if __name__ == "__main__":
-    run_demonstration() 
+    run_demonstration()
