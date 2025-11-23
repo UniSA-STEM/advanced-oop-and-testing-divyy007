@@ -11,7 +11,7 @@ from animal import Animal
 from enclosure import Enclosure
 
 class Staff:
-    """Base class for all employees at the zoo."""
+    """Base class for all staff members."""
     def __init__(self, name: str, employee_id: str):
         self.__name = name
         self.__employee_id = employee_id
@@ -21,23 +21,20 @@ class Staff:
 
     def __str__(self):
         return f"Staff: {self.__name} (ID: {self.__employee_id})"
-
+    
 class Zookeeper(Staff):
-    """Staff responsible for daily care and enclosure maintenance."""
+    """Staff member responsible for feeding and cleaning."""
     def __init__(self, name: str, employee_id: str):
         super().__init__(name, employee_id)
         
     def feed_animal(self, animal: Animal):
-        """Feeds the animal and triggers their specific eating behavior."""
         action = animal.eat()
         return f"{self.get_name()} is feeding {animal.get_name()}. Result: {action}"
         
     def clean_enclosure(self, enclosure: Enclosure):
-        """Restores an enclosure to maximum cleanliness."""
         enclosure.clean() 
         return f"{self.get_name()} cleaned {enclosure.get_name()}. Cleanliness is now maxed out."
-
-
+    
 class Veterinarian(Staff):
     """Staff responsible for medical checks and health records."""
     def __init__(self, name: str, employee_id: str):

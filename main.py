@@ -10,159 +10,139 @@ This is my own work as defined by the University's Academic Integrity Policy.
 from animal import Animal, Mammal, Bird, Reptile, HealthRecord
 from enclosure import Enclosure
 from staff import Staff, Zookeeper, Veterinarian
-from custom_exceptions import AssignmentError
 
 class ZooManager:
-    """Manages all collections of animals, enclosures, and staff."""
+    """The central system for managing the zoo's assets."""
     
     def __init__(self):
-        # Using dictionaries to store objects by name
         self.__animals = {}
         self.__enclosures = {}
-        self.__staff = {}
     
-    # --- Getters ---
     def get_animals(self):
         return self.__animals
 
     def get_enclosures(self):
         return self.__enclosures
     
-    # --- Core Management Methods ---
-    
     def add_animal(self, animal: Animal):
-        """Adds an animal object to the central registry."""
-        # Verify input type
         if not isinstance(animal, Animal):
-            raise TypeError("Only Animal objects can be added to the zoo.")
+            raise TypeError("System Error: Only Animal objects can be added.")
         
-        # Check for duplicates
-        animal_name = animal.get_name()
-        if animal_name in self.__animals:
-             raise AssignmentError(f"Animal '{animal_name}' already exists.")
+        if animal.get_name() in self.__animals:
+             raise ValueError(f"Error: {animal.get_name()} is already registered.")
              
-        self.__animals[animal_name] = animal
-        print(f"REPORT: Added animal: {animal_name} ({animal.__class__.__name__})")
-
-    def remove_animal(self, animal_name: str):
-        """Removes an animal from the registry."""
-        # Safely remove the animal; handles cases where the name doesn't exist
-        try:
-            animal = self.__animals.pop(animal_name)
-            print(f"REPORT: Removed animal: {animal_name}")
-            return animal
-        except KeyError:
-            raise AssignmentError(f"Animal '{animal_name}' not found in registry.")
+        self.__animals[animal.get_name()] = animal
+        print(f"✅ [Registry]: Registered new animal: {animal.get_name()}")
 
     def add_enclosure(self, enclosure: Enclosure):
-        # Verify input type
         if not isinstance(enclosure, Enclosure):
-            raise TypeError("Only Enclosure objects can be added to the zoo.")
+            raise TypeError("System Error: Only Enclosure objects can be added.")
 
-        enc_name = enclosure.get_name()
-        if enc_name in self.__enclosures:
-             raise AssignmentError(f"Enclosure '{enc_name}' already exists.")
+        if enclosure.get_name() in self.__enclosures:
+             raise ValueError(f"Error: {enclosure.get_name()} already exists.")
              
-        self.__enclosures[enc_name] = enclosure
-        print(f"REPORT: Added enclosure: {enc_name} (Type: {enclosure.get_environmental_type()})")
+        self.__enclosures[enclosure.get_name()] = enclosure
+        print(f"✅ [Construction]: Built new enclosure: {enclosure.get_name()}")
 
     def assign_animal_to_enclosure(self, animal_name: str, enclosure_name: str):
-        """Assigns an animal to an enclosure, enforcing all health and species constraints."""
         try:
             animal = self.__animals[animal_name]
             enclosure = self.__enclosures[enclosure_name]
-        except KeyError as e:
-            # Stop if the animal or enclosure names are invalid
-            raise AssignmentError(f"Could not find required entity: {e.args}")
+        except KeyError:
+            raise ValueError(f"Error: Could not find {animal_name} or {enclosure_name}.")
 
-        # Constraint 1: Sick animals cannot be moved
         if animal.is_under_treatment():
-            raise AssignmentError(f"Animal {animal_name} is under treatment and cannot be moved.")
+            raise ValueError(f"🚫 [Safety]: Cannot move {animal_name}. Currently under treatment.")
             
-        # Constraint 2 & 3: Add to enclosure (validation happens inside Enclosure class)
         enclosure.add_animal(animal)
         
-        print(f"REPORT: Assigned {animal_name} to {enclosure_name}.")
+        print(f"🚚 [Transport]: Successfully moved {animal_name} to {enclosure_name}.")
         
-    # --- Reporting and Utilities ---
-    
-    def generate_animal_report_by_species(self, species_class):
-        """Generates a list of animals belonging to a specific class."""
-        # Filter the list to include only the requested species
-        report = [
-            animal.get_name() 
-            for animal in self.__animals.values() 
-            if isinstance(animal, species_class)
-        ]
-        return report
-
-    def generate_health_reports_by_severity(self, min_severity: int):
-        """Generates reports for animals with health issues above a minimum severity."""
-        sick_animals = []
+    def generate_animal_report(self, species_class):
+        print(f"\n--- 📊 Generating {species_class.__name__} Report ---")
+        found_animals = []
+        
         for animal in self.__animals.values():
-            records = animal.get_health_records()
-            for record in records:
-                if record.get_severity() >= min_severity:
-                    sick_animals.append(f"ATTENTION: {animal.get_name()} requires care (Severity: {record.get_severity()})")
-        return sick_animals
+            if isinstance(animal, species_class):
+                found_animals.append(animal.get_name())
         
+        return found_animals
+
+    def check_medical_logs(self):
+        print("\n--- 🏥 Checking Medical Logs ---")
+        severe_cases = []
+        
+        for animal in self.__animals.values():
+            for record in animal.get_health_records():
+                if record.get_severity() >= 7:
+                    severe_cases.append(f"URGENT: {animal.get_name()} - {record}")
+        
+        return severe_cases
+
+
 # --- Demonstration Script ---
 
-def run_demonstration():
+def run_zoo_walkthrough():
+    print("=== 🦁 INITIALIZING ZOO MANAGEMENT SYSTEM 🦁 ===\n")
+    
     zoo = ZooManager()
 
-    # 1. Setup initial animals
+    print("--- Step 1: Registering Animals ---")
     leo = Mammal("Leo", 5, "Meat", "Savannah")
-    penguin = Bird("Waddles", 2, "Fish", "Aquatic")
-    viper = Reptile("Scales", 1, "Rodents", "Desert")
+    waddles = Bird("Waddles", 2, "Fish", "Aquatic")
+    scales = Reptile("Scales", 1, "Rodents", "Desert")
 
-    # 2. Register animals in the system
     zoo.add_animal(leo)
-    zoo.add_animal(penguin)
-    zoo.add_animal(viper)
+    zoo.add_animal(waddles)
+    zoo.add_animal(scales)
+    print("")
 
-    # 3. Create Enclosures
-    lion_habitat = Enclosure("Lion Habitat", 500, "Savannah", 10, Mammal)
-    penguin_pool = Enclosure("Penguin Pool", 300, "Aquatic", 8, Bird)
+    print("--- Step 2: Constructing Enclosures ---")
+    savannah_zone = Enclosure("Savannah Zone", 500, "Savannah", 10, Mammal)
+    aquatic_center = Enclosure("Aquatic Center", 300, "Aquatic", 9, Bird)
     
-    zoo.add_enclosure(lion_habitat)
-    zoo.add_enclosure(penguin_pool)
+    zoo.add_enclosure(savannah_zone)
+    zoo.add_enclosure(aquatic_center)
+    print("")
 
-    # 4. Assign Animals (Successful)
+    print("--- Step 3: Moving Animals to Habitats ---")
     try:
-        zoo.assign_animal_to_enclosure("Leo", "Lion Habitat")
-        zoo.assign_animal_to_enclosure("Waddles", "Penguin Pool")
-    except AssignmentError as e:
-        print(f"ASSIGNMENT FAILED: {e}")
+        zoo.assign_animal_to_enclosure("Leo", "Savannah Zone")
+        zoo.assign_animal_to_enclosure("Waddles", "Aquatic Center")
+    except ValueError as e:
+        print(e)
+    print("")
 
-    # 5. Demonstrate Constraints (Incompatible Species)
-    print("\n--- Testing Constraints (Failures) ---")
-    try:
-        # Attempt to put a Reptile in a Bird enclosure
-        zoo.assign_animal_to_enclosure("Scales", "Penguin Pool")
-    except AssignmentError as e:
-        # Catch the error to keep the program running
-        print(f"FAILURE REPORT: {e}")
-        
-    # 6. Demonstrate Health Constraint
-    # Leo gets sick
-    leo.add_health_issue("Broken tooth", "2024-05-01", 8, "Surgery required")
-    print(f"STATUS: Leo is under treatment: {leo.is_under_treatment()}")
+    print("--- Step 4: Testing Safety Protocols (Failures) ---")
     
+    print("Attempting to put 'Scales' (Reptile) into 'Aquatic Center' (Bird only)...")
     try:
-        # Attempt to move the sick animal
-        print("ATTEMPT: Trying to move sick animal Leo...")
-        zoo.assign_animal_to_enclosure("Leo", "Lion Habitat")
-    except AssignmentError as e:
-        print(f"FAILURE REPORT: {e}")
+        zoo.assign_animal_to_enclosure("Scales", "Aquatic Center")
+    except ValueError as e:
+        print(f"❌ Failed: {e}")
 
-    # 7. Reporting
-    print("\n--- Generating Reports ---")
-    mammal_list = zoo.generate_animal_report_by_species(Mammal)
-    print(f"Mammals in Zoo: {mammal_list}")
-    
-    sick_report = zoo.generate_health_reports_by_severity(5)
-    print(f"High Severity Cases: {sick_report}")
-    
+    print("")
+
+    print("--- Step 5: Medical Emergency Simulation ---")
+    print("🚨 EVENT: Leo has broken a tooth!")
+    leo.add_health_issue("Broken Tooth", "2024-11-24", 8, "Surgery")
+
+    print("Attempting to move Leo back to enclosure...")
+    try:
+        zoo.assign_animal_to_enclosure("Leo", "Savannah Zone")
+    except ValueError as e:
+        print(f"❌ Failed: {e}")
+
+    mammals = zoo.generate_animal_report(Mammal)
+    print(f"Mammal Census: {mammals}")
+
+    sick_list = zoo.check_medical_logs()
+    if sick_list:
+        print("Active Medical Alerts:")
+        for alert in sick_list:
+            print(f"  - {alert}")
+
+    print("\n=== 🏁 SIMULATION COMPLETE 🏁 ===")
+
 if __name__ == "__main__":
-    run_demonstration()
+    run_zoo_walkthrough()
